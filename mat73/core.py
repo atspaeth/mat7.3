@@ -72,7 +72,7 @@ class HDF5Decoder():
                 return True
         return False
 
-    def mat2dict(self, hdf5):
+    def mat2dict(self, hdf5, verbose=True):
 
         if '#refs#' in hdf5:
             self.refs = hdf5['#refs#']
@@ -86,7 +86,7 @@ class HDF5Decoder():
                 continue
             d[var] = self.unpack_mat(hdf5[var])
 
-        if self.only_include is not None:
+        if verbose and self.only_include is not None:
             for var, found in self._found_include_var.items():
                 if not found:
                     logging.warning(f'Variable "{var}" was specified to be loaded'\
@@ -320,7 +320,7 @@ def loadmat(file, use_attrdict=False, only_include=None, verbose=True):
 
     try:
         with h5py.File(file, 'r') as hdf5:
-            dictionary = decoder.mat2dict(hdf5)
+            dictionary = decoder.mat2dict(hdf5, verbose)
         return dictionary
     except FileNotFoundError:
         raise
